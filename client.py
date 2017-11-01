@@ -1,5 +1,5 @@
 #client.py
-import socket
+import socket, time
 import sys
 
 #create a socket object
@@ -36,7 +36,10 @@ if ack == "Authentication Failed!!":
     s.close()
     exit()
 
-print("running")
+while(True):
+    msg = s.recv(1024)
+    print("SERVER: %s" % msg.decode('ascii'))
+    time.sleep(10)
 
 s.close()
 
