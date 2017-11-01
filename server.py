@@ -2,6 +2,7 @@
 import socket, sys
 import time, os
 import utilities.authentication as authentication
+import utilities.broadcast as broadcast
 from thread import *
 
 # create a socket object
@@ -37,9 +38,14 @@ def clientThread(clientSocket, addr):
     onlineUsers.append(userData)
     print("Got a connection from %s [%s]" % ( str(username), str(addr)))
     while True:
-        message = "you are connected"
-        clientSocket.send(message.encode('ascii'))
-        time.sleep(10)
+        msg = clientSocket.recv(1024).decode('ascii')
+        if msg == "Broadcast":
+            message = "SERVER: Give message to be Broadcasted"
+            clientSocket.send(message.encode('ascii'))
+            msg = clientSocket.recv(1024).decode('ascii')
+            broadcast.BroadcastMessage(onlineUsers, username, msg)
+            message = "SERVER: Broadcasted your message"
+            clientSocket.send(message.encode('ascii'))
 
 
 while True:
