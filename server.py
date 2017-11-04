@@ -1,8 +1,9 @@
 # server.py
 import socket, sys
-import time, os
-import utilities.authentication as authentication
-import utilities.broadcast as broadcast
+import os
+from time import gmtime, strftime
+import serverUtilities.authentication as authentication
+import serverUtilities.broadcast as broadcast
 from thread import *
 
 # create a socket object
@@ -28,30 +29,50 @@ serverSocket.listen(100)
 onlineUsers = []
 
 def clientThread(clientSocket, addr):
-    userData = []
-    username, status = authentication.authenticate(clientSocket)
-    if not status:
-        clientSocket.close()
-        return
-    userData.append(username)
-    userData.append(clientSocket)
-    onlineUsers.append(userData)
-    print("Got a connection from %s [%s]" % ( str(username), str(addr)))
-    while True:
+    Authenticated = False
+    while not Authenticated:
         msg = clientSocket.recv(1024).decode('ascii')
-        if msg == "Broadcast":
-            message = "SERVER: Give message to be Broadcasted"
+        clientSocket.send("pass".encode("ascii"))
+
+        if msg == "Exit" :
+            clientSocket.close()
+            return
+
+        elif msg == "Login":
+            userData = []
+            username, Authenticated = authentication.authenticate(clientSocket)
+            if not Authenticated:
+                clientSocket.close()
+                return
+            userData.append(username)
+            userData.append(clientSocket)
+            onlineUsers.append(userData)
+            print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
+
+
+
+    while Authenticated:
+
+        msg = clientSocket.recv(1024).decode('ascii')
+
+        if msg == "Exit" :
+            print("%s | Disconnected from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
+            clientSocket.close()
+            return
+
+        elif msg == "Broadcast":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give message to be Broadcasted"
             clientSocket.send(message.encode('ascii'))
             msg = clientSocket.recv(1024).decode('ascii')
             broadcast.BroadcastMessage(onlineUsers, username, msg)
-            message = "SERVER: Broadcasted your message"
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": Broadcasted your message"
             clientSocket.send(message.encode('ascii'))
 
 
 while True:
     # establish a connection
     clientSocket, addr = serverSocket.accept()
-    welcomeString = "Welcome to the chatting room\n Please provide username and password\n"
+    welcomeString =  strftime("%d-%m-%Y %H:%M:%S", gmtime()) +"  Welcome to the chatting room\n"
     clientSocket.send(welcomeString.encode('ascii'))
     start_new_thread(clientThread, (clientSocket, addr))
 

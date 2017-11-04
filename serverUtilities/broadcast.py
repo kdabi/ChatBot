@@ -10,14 +10,14 @@ def sendBlockData(clientSock, message):
 
 
 def BroadcastMessage (onlineUsers, sender, message):
-    message = sender + ": " + message
+    message = sender + " Broadcasted at " + message
     for username, clientSock in onlineUsers:
         if username != sender:
             try:
                 sendBlockData(clientSock, message)
             except:
                 clientSock.close()
-                del onlineUsers[username]
+                onlineUsers.pop(username)
 
 
 
