@@ -4,6 +4,7 @@ import os
 from time import gmtime, strftime
 import serverUtilities.authentication as authentication
 import serverUtilities.broadcast as broadcast
+import serverUtilities.message as personal
 from thread import *
 
 # create a socket object
@@ -27,6 +28,17 @@ serverSocket.listen(100)
 
 # this dictionary contain username to their respective client socket for all active users
 onlineUsers = {}
+
+path = os.path.abspath("./database/authenticationDetails.txt")
+# taking authentication credentials from the database
+with open(path) as f:
+    credentials = [x.strip().split(' ') for x in f.readlines()]
+f.close()
+
+usernames = []
+
+for username, password in credentials:
+    usernames.append(username)
 
 def clientThread(clientSocket, addr):
     Authenticated = False
@@ -64,6 +76,23 @@ def clientThread(clientSocket, addr):
             broadcast.BroadcastMessage(onlineUsers, username, msg)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": Broadcasted your message"
             clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Message":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give message"
+            clientSocket.send(message.encode('ascii'))
+            msg = clientSocket.recv(1024).decode('ascii')
+
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give user id of receiver"
+            clientSocket.send(message.encode('ascii'))
+            receiver = clientSocket.recv(1024).decode('ascii')
+
+            if receiver in usernames:
+                personal.PersonalMessage(onlineUsers, username, receiver, msg)
+                message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": sent your message"
+                clientSocket.send(message.encode('ascii'))
+            else:
+                message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User \'" + receiver + "\' doesn't exist."
+                clientSocket.send(message.encode('ascii'))
 
 
 while True:

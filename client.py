@@ -5,6 +5,7 @@ import sys
 import select
 import clientUtilities.authentication as authenticate
 import clientUtilities.broadcast as broadcast
+import clientUtilities.message as personal
 
 #create a socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,7 +27,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Login, 2. Broadcast, 3. Exit")
+print("User OPTIONS are :\n1. Login, 2. Broadcast, 3. Message, 4. Exit")
 Authenticated = False
 
 while(True):
@@ -67,6 +68,13 @@ while(True):
                     print("First Login  !!!")
                 else:
                     broadcast.broadcast(s, username)
+
+            # If the user wants to send his message
+            elif message == "Message\n":
+                if not Authenticated:
+                    print("First Login  !!!")
+                else:
+                    personal.personalMessage(s, username)
 
             # When user entered an invalid option
             else:
