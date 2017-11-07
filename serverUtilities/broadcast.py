@@ -11,7 +11,8 @@ def sendBlockData(clientSock, message):
 
 def BroadcastMessage (onlineUsers, sender, message):
     message = sender + " Broadcasted at " + message
-    for username, clientSock in onlineUsers:
+    for username in onlineUsers.keys():
+        clientSock = onlineUsers[username]
         if username != sender:
             try:
                 sendBlockData(clientSock, message)

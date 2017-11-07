@@ -26,7 +26,7 @@ serverSocket.bind((host, int(port)))
 serverSocket.listen(100)
 
 # this dictionary contain username to their respective client socket for all active users
-onlineUsers = []
+onlineUsers = {}
 
 def clientThread(clientSocket, addr):
     Authenticated = False
@@ -39,14 +39,11 @@ def clientThread(clientSocket, addr):
             return
 
         elif msg == "Login":
-            userData = []
             username, Authenticated = authentication.authenticate(clientSocket)
             if not Authenticated:
                 clientSocket.close()
                 return
-            userData.append(username)
-            userData.append(clientSocket)
-            onlineUsers.append(userData)
+            onlineUsers[username] = clientSocket
             print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
 
 
