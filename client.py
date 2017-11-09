@@ -27,7 +27,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Login, 2. Broadcast, 3. Message, 4. Exit")
+print("User OPTIONS are :\n1. Login, 2. Broadcast, 3. Message, 4. Logout, 5. Exit")
 Authenticated = False
 
 while(True):
@@ -54,6 +54,23 @@ while(True):
                     s.close()
                     exit()
                 continue
+
+            # If user wants to log out
+            elif message == "Logout\n":
+                if not Authenticated:
+                    print("First Login  !!!")
+                else:
+                    s.send("Exit".encode("ascii"))
+                    msg = s.recv(1024)
+                    s.close()
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.connect((host,(int)(port)))
+                    tm = s.recv(1024)
+                    print("Logout Successfully")
+                    print("%s" % (tm.decode('ascii')))
+                    Authenticated = False
+                    continue
+
 
             # If the user wants to exit
             elif message == "Exit\n":

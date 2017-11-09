@@ -5,6 +5,7 @@ from time import gmtime, strftime
 import serverUtilities.authentication as authentication
 import serverUtilities.broadcast as broadcast
 import serverUtilities.message as personal
+import serverUtilities.asynchronous as asynchronous
 from thread import *
 
 # create a socket object
@@ -57,6 +58,7 @@ def clientThread(clientSocket, addr):
                 return
             onlineUsers[username] = clientSocket
             print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
+            asynchronous.deliverMessage(username, clientSocket)
 
 
 
@@ -98,7 +100,7 @@ def clientThread(clientSocket, addr):
 while True:
     # establish a connection
     clientSocket, addr = serverSocket.accept()
-    welcomeString =  strftime("%d-%m-%Y %H:%M:%S", gmtime()) +"  Welcome to the chatting room\n"
+    welcomeString =  strftime("%d-%m-%Y %H:%M:%S", gmtime()) +"  Welcome to the chatting room\nPlease Login or Signup\n"
     clientSocket.send(welcomeString.encode('ascii'))
     start_new_thread(clientThread, (clientSocket, addr))
 

@@ -11,8 +11,8 @@ def sendBlockData(clientSock, message):
 
 def storeMessage(receiver, message):
     filePath = os.path.abspath("./database/" + receiver + ".txt")
-    with open(filePath, 'w') as receiverFile:
-        receiverFile.write(message + "\n")
+    receiverFile = open(filePath, 'a')
+    receiverFile.write(message)
     receiverFile.close()
 
 def PersonalMessage (onlineUsers, sender, receiver, message):
