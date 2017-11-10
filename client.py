@@ -4,6 +4,7 @@ from time import gmtime, strftime
 import sys
 import select
 import clientUtilities.authentication as authenticate
+import clientUtilities.signup as signup
 import clientUtilities.broadcast as broadcast
 import clientUtilities.message as personal
 
@@ -27,7 +28,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Login, 2. Broadcast, 3. Message, 4. Logout, 5. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Logout, 6. Exit")
 Authenticated = False
 
 while(True):
@@ -44,16 +45,24 @@ while(True):
         else:
             message = sys.stdin.readline()
 
+            # If the user chooses Signup Option, can't be choose after Loggedin
+            if message == "Signup\n":
+                if Authenticated:
+                    print("Already Loggedin\n")
+                else:
+                    username, Authenticated = signup.Signup(s)
+                if not Authenticated:
+                    continue
+
             # If the user chooses Login Option, can't be choose after authenticated
-            if message == "Login\n":
+            elif message == "Login\n":
                 if Authenticated:
                     print("Already Loggedin\n")
                 else:
                     username, Authenticated = authenticate.authenticate(s)
                 if not Authenticated:
-                    s.close()
-                    exit()
-                continue
+                    print("%s | LOGIN FAILED\nCann't Login for 1 minute" % strftime("%d-%m-%Y %H:%M:%S", gmtime()) )
+                    continue
 
             # If user wants to log out
             elif message == "Logout\n":
@@ -66,7 +75,7 @@ while(True):
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     s.connect((host,(int)(port)))
                     tm = s.recv(1024)
-                    print("Logout Successfully")
+                    print("Logged Out Successfully")
                     print("%s" % (tm.decode('ascii')))
                     Authenticated = False
                     continue

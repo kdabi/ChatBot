@@ -3,6 +3,7 @@ import socket, sys
 import os
 from time import gmtime, strftime
 import serverUtilities.authentication as authentication
+import serverUtilities.signup as signup
 import serverUtilities.broadcast as broadcast
 import serverUtilities.message as personal
 import serverUtilities.asynchronous as asynchronous
@@ -54,12 +55,18 @@ def clientThread(clientSocket, addr):
         elif msg == "Login":
             username, Authenticated = authentication.authenticate(clientSocket)
             if not Authenticated:
-                clientSocket.close()
-                return
+                continue
             onlineUsers[username] = clientSocket
             print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
             asynchronous.deliverMessage(username, clientSocket)
 
+        elif msg == "Signup":
+            username, Authenticated = signup.Signup(clientSocket)
+            if not Authenticated:
+                continue
+            onlineUsers[username] = clientSocket
+            usernames.append(username)
+            print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
 
 
     while Authenticated:
