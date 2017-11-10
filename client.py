@@ -7,6 +7,7 @@ import clientUtilities.authentication as authenticate
 import clientUtilities.signup as signup
 import clientUtilities.broadcast as broadcast
 import clientUtilities.message as personal
+import time
 
 #create a socket object
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,6 +31,8 @@ tm = s.recv(1024)
 print("%s" % (tm.decode('ascii')))
 print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Logout, 6. Exit")
 Authenticated = False
+wait = 0
+future = round(time.time() ,3)
 
 while(True):
     socketsList = [sys.stdin, s]
@@ -49,20 +52,41 @@ while(True):
             if message == "Signup\n":
                 if Authenticated:
                     print("Already Loggedin\n")
+                elif future > round(time.time(), 3):
+                    print("Can't login or signup for %s more seconds.\n" % str(round(future, 3) - round(time.time(), 3)))
                 else:
                     username, Authenticated = signup.Signup(s)
-                if not Authenticated:
-                    continue
+                    if not Authenticated:
+                        if wait == 0:
+                            wait = 30
+                            future = round(time.time(), 3) + wait
+                        else:
+                            wait = 2*wait
+                            future = round(time.time(), 3) + wait
+                        print("Can't login or signup for %s more seconds.\n" % str(wait))
+                    else:
+                        wait = 0
+                        future = round(time.time(), 3)
 
             # If the user chooses Login Option, can't be choose after authenticated
             elif message == "Login\n":
                 if Authenticated:
                     print("Already Loggedin\n")
+                elif future > round(time.time(), 3):
+                    print("Can't login or signup for %s more seconds.\n" % str(future - round(time.time(),3) ))
                 else:
                     username, Authenticated = authenticate.authenticate(s)
-                if not Authenticated:
-                    print("%s | LOGIN FAILED\nCann't Login for 1 minute" % strftime("%d-%m-%Y %H:%M:%S", gmtime()) )
-                    continue
+                    if not Authenticated:
+                        if wait == 0:
+                            wait = 30
+                            future = round(time.time(), 3) + wait
+                        else:
+                            wait = 2*wait
+                            future = round(time.time(), 3) + wait
+                        print("Can't login or signup for %s more seconds.\n" % str(wait))
+                    else:
+                        wait = 0
+                        future = round(time.time(), 3)
 
             # If user wants to log out
             elif message == "Logout\n":
@@ -91,14 +115,14 @@ while(True):
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":
                 if not Authenticated:
-                    print("First Login  !!!")
+                    print("First Login  !!!\n")
                 else:
                     broadcast.broadcast(s, username)
 
             # If the user wants to send his message
             elif message == "Message\n":
                 if not Authenticated:
-                    print("First Login  !!!")
+                    print("First Login  !!!\n")
                 else:
                     personal.personalMessage(s, username)
 
