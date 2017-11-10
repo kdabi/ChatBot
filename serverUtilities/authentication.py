@@ -2,12 +2,13 @@ import os
 # Defines the function to authenticate the users
 
 path = os.path.abspath("./database/authenticationDetails.txt")
-# taking authentication credentials from the database
-with open(path) as f:
-    credentials = [x.strip().split(' ') for x in f.readlines()]
-f.close()
 
 def authenticate(clientSocket):
+    # taking authentication credentials from the database
+    f = open(path, "r")
+    credentials = [x.strip().split(' ') for x in f.readlines()]
+    f.close()
+
     for i in [1,2,3]:
         myUsername = clientSocket.recv(1024).decode('ascii')
         message = "Password"
