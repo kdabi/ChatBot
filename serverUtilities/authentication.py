@@ -3,7 +3,7 @@ import os
 
 path = os.path.abspath("./database/authenticationDetails.txt")
 
-def authenticate(clientSocket):
+def authenticate(onlineUsers, clientSocket):
     # taking authentication credentials from the database
     f = open(path, "r")
     credentials = [x.strip().split(' ') for x in f.readlines()]
@@ -14,6 +14,10 @@ def authenticate(clientSocket):
         message = "Password"
         clientSocket.send(message.encode('ascii'))
         myPassword = clientSocket.recv(1024).decode('ascii')
+        if myUsername in onlineUsers.keys():
+            message = "User \'" + myUsername + "\' already Logged-in!!"
+            clientSocket.send(message.encode('ascii'))
+            continue
         for username, password in credentials:
             if username == myUsername and myPassword == password:
                 message = "Authenticated!!"

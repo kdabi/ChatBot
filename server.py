@@ -58,7 +58,7 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
 
         elif msg == "Login":
-            username, Authenticated = authentication.authenticate(clientSocket)
+            username, Authenticated = authentication.authenticate(onlineUsers, clientSocket)
             if not Authenticated:
                 continue
             onlineUsers[username] = clientSocket
