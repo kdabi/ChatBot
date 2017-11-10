@@ -52,6 +52,11 @@ def clientThread(clientSocket, addr):
             clientSocket.close()
             return
 
+        elif msg == "Online_Users" :
+            msg = clientSocket.recv(1024).decode('ascii')
+            message = str(onlineUsers.keys())
+            clientSocket.send(message.encode('ascii'))
+
         elif msg == "Login":
             username, Authenticated = authentication.authenticate(clientSocket)
             if not Authenticated:
@@ -74,9 +79,15 @@ def clientThread(clientSocket, addr):
         msg = clientSocket.recv(1024).decode('ascii')
 
         if msg == "Exit" :
+            onlineUsers.pop(username)
             print("%s | Disconnected from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
             clientSocket.close()
             return
+
+        elif msg == "Online_Users" :
+            msg = clientSocket.recv(1024).decode('ascii')
+            message = str(onlineUsers.keys())
+            clientSocket.send(message.encode('ascii'))
 
         elif msg == "Broadcast":
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give message to be Broadcasted"

@@ -29,7 +29,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Logout, 6. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Logout, 7. Exit")
 Authenticated = False
 wait = 0
 future = round(time.time() ,3)
@@ -111,6 +111,14 @@ while(True):
                 msg = s.recv(1024)
                 s.close()
                 exit()
+
+            # If the user wants to get list of all online users
+            elif message == "Online_Users\n":
+                s.send("Online_Users".encode("ascii"))
+                msg = s.recv(1024)
+                s.send("pass".encode("ascii"))
+                msg = s.recv(1024)
+                print("Server | %s | Online Users are %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":
