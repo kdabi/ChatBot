@@ -7,6 +7,7 @@ import clientUtilities.authentication as authenticate
 import clientUtilities.signup as signup
 import clientUtilities.broadcast as broadcast
 import clientUtilities.message as personal
+import clientUtilities.deleteAccount as deleteAccount
 import time
 
 #create a socket object
@@ -29,7 +30,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Delete_Account, 11. Exit")
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -175,6 +176,23 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     personal.personalMessage(s, username)
+
+            # If the user wants to delete his account
+            elif message == "Delete_Account\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    isDeleted = deleteAccount.Remove(s, username)
+                    if isDeleted:
+                        s.send("Exit".encode("ascii"))
+                        msg = s.recv(1024)
+                        s.close()
+                        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        s.connect((host,(int)(port)))
+                        tm = s.recv(1024)
+                        print("%s" % (tm.decode('ascii')))
+                        Authenticated = False
+                        continue
 
             # When user entered an invalid option
             else:

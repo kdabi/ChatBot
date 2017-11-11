@@ -6,6 +6,7 @@ import serverUtilities.authentication as authentication
 import serverUtilities.signup as signup
 import serverUtilities.broadcast as broadcast
 import serverUtilities.message as personal
+import serverUtilities.deleteAccount as deleteAccount
 import serverUtilities.asynchronous as asynchronous
 from thread import *
 
@@ -163,6 +164,20 @@ def clientThread(clientSocket, addr):
             else:
                 message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User \'" + receiver + "\' doesn't exist.\n"
                 clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Delete_Account":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Enter Current Password"
+            clientSocket.send(message.encode('ascii'))
+            currPassword = clientSocket.recv(1024).decode('ascii')
+
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Enter Confirm Password"
+            clientSocket.send(message.encode('ascii'))
+            confirmPassword = clientSocket.recv(1024).decode('ascii')
+
+            message = deleteAccount.Remove(username, currPassword, confirmPassword)
+            clientSocket.send(message.encode('ascii'))
+            if message == "User \'" + username + "\' deleted.\n":
+                usernames.remove(username)
 
 
 while True:
