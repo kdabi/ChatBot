@@ -29,10 +29,10 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Logout, 7. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Logout, 8. Exit")
 Authenticated = False
 wait = 0
-future = round(time.time() ,3)
+future = int(time.time())
 
 while(True):
     socketsList = [sys.stdin, s]
@@ -52,41 +52,41 @@ while(True):
             if message == "Signup\n":
                 if Authenticated:
                     print("Already Loggedin\n")
-                elif future > round(time.time(), 3):
-                    print("Can't login or signup for %s more seconds.\n" % str(round(future, 3) - round(time.time(), 3)))
+                elif future > int(time.time()):
+                    print("Can't login or signup for %s more seconds.\n" % str(future +1 - int(time.time())))
                 else:
                     username, Authenticated = signup.Signup(s)
                     if not Authenticated:
                         if wait == 0:
                             wait = 30
-                            future = round(time.time(), 3) + wait
+                            future = int(time.time()) + wait
                         else:
                             wait = 2*wait
-                            future = round(time.time(), 3) + wait
+                            future = int(time.time()) + wait
                         print("Can't login or signup for %s more seconds.\n" % str(wait))
                     else:
                         wait = 0
-                        future = round(time.time(), 3)
+                        future = int(time.time())
 
             # If the user chooses Login Option, can't be choose after authenticated
             elif message == "Login\n":
                 if Authenticated:
                     print("Already Loggedin\n")
-                elif future > round(time.time(), 3):
-                    print("Can't login or signup for %s more seconds.\n" % str(future - round(time.time(),3) ))
+                elif future > int(time.time()):
+                    print("Can't login or signup for %s more seconds.\n" % str(future - int(time.time()) ))
                 else:
                     username, Authenticated = authenticate.authenticate(s)
                     if not Authenticated:
                         if wait == 0:
                             wait = 30
-                            future = round(time.time(), 3) + wait
+                            future = int(time.time()) + wait
                         else:
                             wait = 2*wait
-                            future = round(time.time(), 3) + wait
+                            future = int(time.time()) + wait
                         print("Can't login or signup for %s more seconds.\n" % str(wait))
                     else:
                         wait = 0
-                        future = round(time.time(), 3)
+                        future = int(time.time())
 
             # If user wants to log out
             elif message == "Logout\n":
@@ -112,13 +112,25 @@ while(True):
                 s.close()
                 exit()
 
+            # If the user wants to block another user
+            elif message == "Block\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    userToBlock = raw_input("Mention user to be blocked : ")
+                    s.send("Block".encode("ascii"))
+                    msg = s.recv(1024)
+                    s.send(userToBlock.encode("ascii"))
+                    msg = s.recv(1024)
+                    print("Server | %s | %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
+
             # If the user wants to get list of all online users
             elif message == "Online_Users\n":
                 s.send("Online_Users".encode("ascii"))
                 msg = s.recv(1024)
                 s.send("pass".encode("ascii"))
                 msg = s.recv(1024)
-                print("Server | %s | Online Users are %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
+                print("Server | %s | Online Users are %s\n" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":

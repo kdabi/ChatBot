@@ -63,7 +63,7 @@ def clientThread(clientSocket, addr):
                 continue
             onlineUsers[username] = clientSocket
             print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
-            asynchronous.deliverMessage(username, clientSocket)
+            blockedUsers = asynchronous.deliverMessage(username, clientSocket)
 
         elif msg == "Signup":
             username, Authenticated = signup.Signup(clientSocket)
@@ -72,19 +72,36 @@ def clientThread(clientSocket, addr):
             onlineUsers[username] = clientSocket
             usernames.append(username)
             print("%s | Got a connection from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
+            blockedUsers = []
 
 
     while Authenticated:
 
         msg = clientSocket.recv(1024).decode('ascii')
 
-        if msg == "Exit" :
+        if msg == "Block" :
+            clientSocket.send("Pass".encode('ascii'))
+            userToBlock = clientSocket.recv(1024).decode('ascii')
+            if not userToBlock in usernames:
+                message = "No such user exists.\n"
+            elif userToBlock in blockedUsers:
+                message = "user "+ userToBlock +" already blocked.\n"
+            else:
+                message = "user " + userToBlock + " blocked.\n"
+                blockedUsers.append(userToBlock)
+                f = open("./database/block/" + username + ".txt", "a")
+                f.write(userToBlock + "\n")
+                f.close()
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Exit" :
             onlineUsers.pop(username)
             print("%s | Disconnected from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
             clientSocket.close()
             return
 
         elif msg == "Online_Users" :
+            clientSocket.send("Pass".encode('ascii'))
             msg = clientSocket.recv(1024).decode('ascii')
             message = str(onlineUsers.keys())
             clientSocket.send(message.encode('ascii'))
@@ -94,7 +111,7 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             msg = clientSocket.recv(1024).decode('ascii')
             broadcast.BroadcastMessage(onlineUsers, username, msg)
-            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": Broadcasted your message"
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": Broadcasted your message\n"
             clientSocket.send(message.encode('ascii'))
 
         elif msg == "Message":
@@ -107,11 +124,10 @@ def clientThread(clientSocket, addr):
             receiver = clientSocket.recv(1024).decode('ascii')
 
             if receiver in usernames:
-                personal.PersonalMessage(onlineUsers, username, receiver, msg)
-                message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": sent your message"
+                message = personal.PersonalMessage(onlineUsers, username, receiver, msg)
                 clientSocket.send(message.encode('ascii'))
             else:
-                message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User \'" + receiver + "\' doesn't exist."
+                message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User \'" + receiver + "\' doesn't exist.\n"
                 clientSocket.send(message.encode('ascii'))
 
 

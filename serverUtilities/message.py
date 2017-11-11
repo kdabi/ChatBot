@@ -1,5 +1,6 @@
 import socket
 import os
+from time import gmtime, strftime
 
 
 def sendBlockData(clientSock, message):
@@ -15,9 +16,22 @@ def storeMessage(receiver, message):
     receiverFile.write(message)
     receiverFile.close()
 
+def getBlockedUsers(username):
+    path = os.path.abspath("./database/block/" + username + ".txt")
+    f = open(path, "r")
+    blockedUsers = [x.strip() for x in f.readlines()]
+    f.close()
+    return blockedUsers
+
+
 def PersonalMessage (onlineUsers, sender, receiver, message):
     message = sender + " " + message
-    if receiver in onlineUsers.keys():
+    blockedUsers = getBlockedUsers(receiver)
+    if sender in blockedUsers:
+        message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User " + receiver +" has BLOCKED you.\n"
+        return message
+
+    elif receiver in onlineUsers.keys():
         clientSock = onlineUsers[receiver]
         try:
             sendBlockData(clientSock, message)
@@ -27,6 +41,8 @@ def PersonalMessage (onlineUsers, sender, receiver, message):
             storeMessage(receiver, message)
     else:
         storeMessage(receiver, message)
+    message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": sent your message\n"
+    return message
 
 
 

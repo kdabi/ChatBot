@@ -59,4 +59,6 @@ def Signup(clientSocket):
     f.close()
     f = open("./database/"+ myUsername + ".txt", 'w')
     f.close()
+    f = open("./database/block/"+ myUsername + ".txt", 'w')
+    f.close()
     return myUsername, True

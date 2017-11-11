@@ -1,8 +1,6 @@
 import os
 import socket
 
-path = os.path.abspath("./database/authenticationDetails.txt")
-
 def deliverMessage(username , clientSocket):
     path = os.path.abspath("./database/" + username + ".txt")
     f = open(path, "r")
@@ -12,3 +10,9 @@ def deliverMessage(username , clientSocket):
     f.close()
     for line in lines:
         clientSocket.send(line.encode('ascii'))
+
+    path = os.path.abspath("./database/block/" + username + ".txt")
+    f = open(path, "r")
+    blockedUsers = [x.strip() for x in f.readlines()]
+    f.close()
+    return blockedUsers
