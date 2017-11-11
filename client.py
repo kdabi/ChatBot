@@ -8,6 +8,7 @@ import clientUtilities.signup as signup
 import clientUtilities.broadcast as broadcast
 import clientUtilities.message as personal
 import clientUtilities.deleteAccount as deleteAccount
+import clientUtilities.updatePassword as updatePassword
 import time
 
 #create a socket object
@@ -30,7 +31,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Delete_Account, 11. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Exit, 13. Options")
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -68,6 +69,10 @@ while(True):
                     else:
                         wait = 0
                         future = int(time.time())
+
+            # if user wants to print options
+            elif message == "Options\n":
+                print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Exit, 13. Options")
 
             # If the user chooses Login Option, can't be choose after authenticated
             elif message == "Login\n":
@@ -193,6 +198,13 @@ while(True):
                         print("%s" % (tm.decode('ascii')))
                         Authenticated = False
                         continue
+
+            # If the user wants to update his password
+            elif message == "Update_Password\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    updatePassword.update(s, username)
 
             # When user entered an invalid option
             else:

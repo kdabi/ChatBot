@@ -8,6 +8,7 @@ import serverUtilities.broadcast as broadcast
 import serverUtilities.message as personal
 import serverUtilities.deleteAccount as deleteAccount
 import serverUtilities.asynchronous as asynchronous
+import serverUtilities.updatePassword as updatePassword
 from thread import *
 
 # create a socket object
@@ -178,6 +179,18 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             if message == "User \'" + username + "\' deleted.\n":
                 usernames.remove(username)
+
+        elif msg == "Update_Password":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Enter Current Password"
+            clientSocket.send(message.encode('ascii'))
+            currPassword = clientSocket.recv(1024).decode('ascii')
+
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Enter New Password"
+            clientSocket.send(message.encode('ascii'))
+            newPassword = clientSocket.recv(1024).decode('ascii')
+
+            message = updatePassword.update(username, currPassword, newPassword)
+            clientSocket.send(message.encode('ascii'))
 
 
 while True:
