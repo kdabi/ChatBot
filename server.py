@@ -38,6 +38,7 @@ with open(path) as f:
 f.close()
 
 usernames = []
+lastTimeActive = {}
 
 for username, password in credentials:
     usernames.append(username)
@@ -77,6 +78,7 @@ def clientThread(clientSocket, addr):
 
     while Authenticated:
 
+        lastTimeActive[username] = strftime("%d-%m-%Y %H:%M:%S", gmtime())
         msg = clientSocket.recv(1024).decode('ascii')
 
         if msg == "Block" :
@@ -98,6 +100,7 @@ def clientThread(clientSocket, addr):
             onlineUsers.pop(username)
             print("%s | Disconnected from %s [%s]" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(username), str(addr)))
             clientSocket.close()
+            lastTimeActive[username] = strftime("%d-%m-%Y %H:%M:%S", gmtime())
             return
 
         elif msg == "Unblock" :
@@ -116,6 +119,19 @@ def clientThread(clientSocket, addr):
                 for userToBlock in blockedUsers:
                     f.write(userToBlock + "\n")
                 f.close()
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Check_User" :
+            clientSocket.send("Pass".encode('ascii'))
+            userToCheck = clientSocket.recv(1024).decode('ascii')
+            if not userToCheck in usernames:
+                message = "No such user exists.\n"
+            elif userToCheck in onlineUsers:
+                message = "user \'"+ userToCheck +"\' is active now.\n"
+            elif userToCheck in lastTimeActive.keys():
+                message = "user \'"+ userToCheck +"\' was last time active at " + lastTimeActive[userToCheck] + ".\n"
+            else:
+                message = "user \'"+ userToCheck +"\' was never active in this session.\n"
             clientSocket.send(message.encode('ascii'))
 
         elif msg == "Online_Users" :

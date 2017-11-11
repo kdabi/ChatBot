@@ -29,7 +29,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Logout, 9. Exit")
+print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Exit")
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -118,6 +118,8 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     userToBlock = raw_input("Mention user to be blocked : ")
+                    if len(userToBlock) < 3 or len(userToBlock) >15:
+                        userToBlock = "a"
                     s.send("Block".encode("ascii"))
                     msg = s.recv(1024)
                     s.send(userToBlock.encode("ascii"))
@@ -130,7 +132,23 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     userToBlock = raw_input("Mention user to unblock : ")
+                    if len(userToBlock) < 3 or len(userToBlock) >15:
+                        userToBlock = "a"
                     s.send("Unblock".encode("ascii"))
+                    msg = s.recv(1024)
+                    s.send(userToBlock.encode("ascii"))
+                    msg = s.recv(1024)
+                    print("Server | %s | %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
+
+            # If the user wants to check when the other user was online last time
+            elif message == "Check_User\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    userToBlock = raw_input("Mention user you whose last active you want to see : ")
+                    if len(userToBlock) < 3 or len(userToBlock) >15:
+                        userToBlock = "a"
+                    s.send("Check_User".encode("ascii"))
                     msg = s.recv(1024)
                     s.send(userToBlock.encode("ascii"))
                     msg = s.recv(1024)
