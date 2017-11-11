@@ -27,7 +27,13 @@ def getBlockedUsers(username):
 def PersonalMessage (onlineUsers, sender, receiver, message):
     message = sender + " " + message
     blockedUsers = getBlockedUsers(receiver)
-    if sender in blockedUsers:
+    myBlockedUsers = getBlockedUsers(sender)
+
+    if receiver in myBlockedUsers:
+        message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User " + receiver +" is BLOCKED by you.\n"
+        return message
+
+    elif sender in blockedUsers:
         message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": User " + receiver +" has BLOCKED you.\n"
         return message
 

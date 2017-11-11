@@ -100,6 +100,24 @@ def clientThread(clientSocket, addr):
             clientSocket.close()
             return
 
+        elif msg == "Unblock" :
+            clientSocket.send("Pass".encode('ascii'))
+            userToBlock = clientSocket.recv(1024).decode('ascii')
+            if not userToBlock in usernames:
+                message = "No such user exists.\n"
+            elif not userToBlock in blockedUsers:
+                message = "user "+ userToBlock +" is not blocked by you.\n"
+            else:
+                message = "user " + userToBlock + " unblocked.\n"
+                blockedUsers.remove(userToBlock)
+                f = open("./database/block/" + username + ".txt", "w")
+                f.close()
+                f = open("./database/block/" + username + ".txt", "a")
+                for userToBlock in blockedUsers:
+                    f.write(userToBlock + "\n")
+                f.close()
+            clientSocket.send(message.encode('ascii'))
+
         elif msg == "Online_Users" :
             clientSocket.send("Pass".encode('ascii'))
             msg = clientSocket.recv(1024).decode('ascii')
