@@ -10,6 +10,7 @@ import clientUtilities.message as personal
 import clientUtilities.deleteAccount as deleteAccount
 import clientUtilities.updatePassword as updatePassword
 import clientUtilities.createGroup as createGroup
+import clientUtilities.addMember as addMember
 import time
 
 #create a socket object
@@ -175,6 +176,13 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     createGroup.create(s, username)
+
+            # If the user wants to add new members to a group
+            elif message == "Add_Member\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    addMember.add(s, username)
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":

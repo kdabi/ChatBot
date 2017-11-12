@@ -18,9 +18,7 @@ def create(username, groupName):
     else:
         path = os.path.abspath("./database/group/gp.txt")
         path1 = os.path.abspath("./database/group/"+ groupName +".txt")
-        f = open(path, "w")
-        for gp in groups:
-            f.write(gp + "\n")
+        f = open(path, "a")
         f.write(groupName + "\n")
         f.close()
         f = open(path1, "w")

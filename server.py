@@ -10,6 +10,7 @@ import serverUtilities.deleteAccount as deleteAccount
 import serverUtilities.asynchronous as asynchronous
 import serverUtilities.updatePassword as updatePassword
 import serverUtilities.createGroup as createGroup
+import serverUtilities.addMember as addMember
 from thread import *
 
 # create a socket object
@@ -156,6 +157,17 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             groupName = clientSocket.recv(1024).decode('ascii')
             message = createGroup.create(username, groupName)
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Add_Member":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give name of the group to which you want to add member."
+            clientSocket.send(message.encode('ascii'))
+            groupName = clientSocket.recv(1024).decode('ascii')
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give user which you want to add to the group."
+            clientSocket.send(message.encode('ascii'))
+            username2 = clientSocket.recv(1024).decode('ascii')
+            message = addMember.add(usernames, username, groupName, username2)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
             clientSocket.send(message.encode('ascii'))
 
