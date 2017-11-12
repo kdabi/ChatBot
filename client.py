@@ -9,6 +9,7 @@ import clientUtilities.broadcast as broadcast
 import clientUtilities.message as personal
 import clientUtilities.deleteAccount as deleteAccount
 import clientUtilities.updatePassword as updatePassword
+import clientUtilities.createGroup as createGroup
 import time
 
 #create a socket object
@@ -167,6 +168,13 @@ while(True):
                 s.send("pass".encode("ascii"))
                 msg = s.recv(1024)
                 print("Server | %s | Online Users are %s\n" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
+
+            # If the user wants to create new group
+            elif message == "Create_Group\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    createGroup.create(s, username)
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":

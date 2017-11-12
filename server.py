@@ -9,6 +9,7 @@ import serverUtilities.message as personal
 import serverUtilities.deleteAccount as deleteAccount
 import serverUtilities.asynchronous as asynchronous
 import serverUtilities.updatePassword as updatePassword
+import serverUtilities.createGroup as createGroup
 from thread import *
 
 # create a socket object
@@ -148,6 +149,14 @@ def clientThread(clientSocket, addr):
             msg = clientSocket.recv(1024).decode('ascii')
             broadcast.BroadcastMessage(onlineUsers, username, msg)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": Broadcasted your message\n"
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Create_Group":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give name of the group you want to create."
+            clientSocket.send(message.encode('ascii'))
+            groupName = clientSocket.recv(1024).decode('ascii')
+            message = createGroup.create(username, groupName)
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
             clientSocket.send(message.encode('ascii'))
 
         elif msg == "Message":
