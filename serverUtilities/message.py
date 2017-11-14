@@ -24,8 +24,8 @@ def getBlockedUsers(username):
     return blockedUsers
 
 
-def PersonalMessage (onlineUsers, sender, receiver, message):
-    message = sender + " " + message
+def PersonalMessage (onlineUsers, sender, receiver, message, extra = ""):
+    message = sender + extra + " " + message
     blockedUsers = getBlockedUsers(receiver)
     myBlockedUsers = getBlockedUsers(sender)
 

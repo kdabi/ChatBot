@@ -11,6 +11,7 @@ import serverUtilities.asynchronous as asynchronous
 import serverUtilities.updatePassword as updatePassword
 import serverUtilities.createGroup as createGroup
 import serverUtilities.addMember as addMember
+import serverUtilities.messageGroup as messageGroup
 from thread import *
 
 # create a socket object
@@ -168,6 +169,17 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             username2 = clientSocket.recv(1024).decode('ascii')
             message = addMember.add(usernames, username, groupName, username2)
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Message_Group":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give name of the group you want to messaga."
+            clientSocket.send(message.encode('ascii'))
+            groupName = clientSocket.recv(1024).decode('ascii')
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give your message."
+            clientSocket.send(message.encode('ascii'))
+            message = clientSocket.recv(1024).decode('ascii')
+            message = messageGroup.message(onlineUsers, usernames, username, groupName, message)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
             clientSocket.send(message.encode('ascii'))
 

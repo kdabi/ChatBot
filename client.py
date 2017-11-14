@@ -11,6 +11,7 @@ import clientUtilities.deleteAccount as deleteAccount
 import clientUtilities.updatePassword as updatePassword
 import clientUtilities.createGroup as createGroup
 import clientUtilities.addMember as addMember
+import clientUtilities.messageGroup as messageGroup
 import time
 
 #create a socket object
@@ -33,7 +34,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Exit, 13. Options")
+print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit, 17. Leave_Group\n")
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -74,7 +75,7 @@ while(True):
 
             # if user wants to print options
             elif message == "Options\n":
-                print("User OPTIONS are :\n1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Exit, 13. Options")
+                print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit, 17. Leave_Group\n")
 
             # If the user chooses Login Option, can't be choose after authenticated
             elif message == "Login\n":
@@ -183,6 +184,13 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     addMember.add(s, username)
+
+            # If the user wants to add new members to a group
+            elif message == "Message_Group\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    messageGroup.message(s, username)
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n":
