@@ -1,13 +1,12 @@
 import socket
 from time import gmtime, strftime
 
-def broadcast(mySocket, username):
-    mySocket.send("Broadcast".encode('ascii'))
+def deleteGroup(mySocket, username):
+    mySocket.send("Delete_Group".encode('ascii'))
     msg = mySocket.recv(1024)
     print("%s" % msg.decode('ascii'))
-    message = raw_input("give message - ")
+    message = raw_input("Group Name - ")
     if len(message) == 0:
         message = "-"
-    message = strftime("%d-%m-%Y %H:%M:%S", gmtime())+ " : "+message+"\n"
     mySocket.send(message.encode('ascii'))
     return

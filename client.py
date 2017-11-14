@@ -12,6 +12,7 @@ import clientUtilities.updatePassword as updatePassword
 import clientUtilities.createGroup as createGroup
 import clientUtilities.addMember as addMember
 import clientUtilities.messageGroup as messageGroup
+import clientUtilities.deleteGroup as deleteGroup
 import time
 
 #create a socket object
@@ -34,7 +35,7 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit, 17. Leave_Group\n")
+print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit\n")
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -54,7 +55,7 @@ while(True):
             message = sys.stdin.readline()
 
             # If the user chooses Signup Option, can't be choose after Loggedin
-            if message == "Signup\n":
+            if message == "Signup\n" or message == "1\n":
                 if Authenticated:
                     print("Already Loggedin\n")
                 elif future > int(time.time()):
@@ -74,11 +75,11 @@ while(True):
                         future = int(time.time())
 
             # if user wants to print options
-            elif message == "Options\n":
-                print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit, 17. Leave_Group\n")
+            elif message == "Options\n" or message == "0\n" or message == "\n":
+                print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit\n")
 
             # If the user chooses Login Option, can't be choose after authenticated
-            elif message == "Login\n":
+            elif message == "Login\n" or message == "2\n":
                 if Authenticated:
                     print("Already Loggedin\n")
                 elif future > int(time.time()):
@@ -98,7 +99,7 @@ while(True):
                         future = int(time.time())
 
             # If user wants to log out
-            elif message == "Logout\n":
+            elif message == "Logout\n" or message == "9\n":
                 if not Authenticated:
                     print("First Login  !!!")
                 else:
@@ -115,14 +116,14 @@ while(True):
 
 
             # If the user wants to exit
-            elif message == "Exit\n":
+            elif message == "Exit\n" or message == "16\n":
                 s.send("Exit".encode("ascii"))
                 msg = s.recv(1024)
                 s.close()
                 exit()
 
             # If the user wants to block another user
-            elif message == "Block\n":
+            elif message == "Block\n" or message == "6\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
@@ -136,7 +137,7 @@ while(True):
                     print("Server | %s | %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to unblock other blocked user
-            elif message == "Unblock\n":
+            elif message == "Unblock\n" or message == "7\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
@@ -150,7 +151,7 @@ while(True):
                     print("Server | %s | %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to check when the other user was online last time
-            elif message == "Check_User\n":
+            elif message == "Check_User\n" or message == "8\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
@@ -164,7 +165,7 @@ while(True):
                     print("Server | %s | %s" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to get list of all online users
-            elif message == "Online_Users\n":
+            elif message == "Online_Users\n" or message == "5\n":
                 s.send("Online_Users".encode("ascii"))
                 msg = s.recv(1024)
                 s.send("pass".encode("ascii"))
@@ -172,42 +173,49 @@ while(True):
                 print("Server | %s | Online Users are %s\n" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to create new group
-            elif message == "Create_Group\n":
+            elif message == "Create_Group\n" or message == "12\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
                     createGroup.create(s, username)
 
             # If the user wants to add new members to a group
-            elif message == "Add_Member\n":
+            elif message == "Add_Member\n" or message == "13\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
                     addMember.add(s, username)
 
-            # If the user wants to add new members to a group
-            elif message == "Message_Group\n":
+            # If the user wants to message to a group
+            elif message == "Message_Group\n" or message == "14\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
                     messageGroup.message(s, username)
 
+            # If the user wants to delete group
+            elif message == "Delete_Group\n" or message == "15\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    deleteGroup.deleteGroup(s, username)
+
             # If the user wants to broadcast his message
-            elif message == "Broadcast\n":
+            elif message == "Broadcast\n" or message == "3\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
                     broadcast.broadcast(s, username)
 
             # If the user wants to send his message
-            elif message == "Message\n":
+            elif message == "Message\n" or message == "4\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
                     personal.personalMessage(s, username)
 
             # If the user wants to delete his account
-            elif message == "Delete_Account\n":
+            elif message == "Delete_Account\n" or message == "11\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:
@@ -224,7 +232,7 @@ while(True):
                         continue
 
             # If the user wants to update his password
-            elif message == "Update_Password\n":
+            elif message == "Update_Password\n" or message == "10\n":
                 if not Authenticated:
                     print("First Login  !!!\n")
                 else:

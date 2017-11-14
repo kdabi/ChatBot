@@ -8,13 +8,13 @@ def update(mySocket, username):
     print("%s" % msg.decode('ascii'))
     message = getpass.getpass()
     if len(message) == 0:
-        message = "a"
+        message = "-"
     mySocket.send(message.encode('ascii'))
     msg = mySocket.recv(1024)
     print("%s" % msg.decode('ascii'))
     message = getpass.getpass()
     if len(message) == 0:
-        message = "a"
+        message = "-"
     mySocket.send(message.encode('ascii'))
     msg = mySocket.recv(1024)
     print("%s\n" % msg.decode('ascii'))

@@ -1,5 +1,5 @@
 import socket
-import os
+import os, sys
 from time import gmtime, strftime
 
 def Remove(username, currPassword, confirmPassword):

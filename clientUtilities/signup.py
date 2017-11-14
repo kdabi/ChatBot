@@ -9,8 +9,8 @@ def Signup(s):
     Authenticated = False
     print("SERVER: | %s | Username and Password should be of length 3 - 15 and should not contain spaces or newline characters\n" %( strftime("%d-%m-%Y %H:%M:%S", gmtime())))
     username = raw_input("Username: ")
-    if len(username) < 3 or len(username) >15 :
-        username = "a"
+    if len(username) == 0 :
+        username = "-"
     s.send(username.encode('ascii'))
     ack = s.recv(1024)
     if not ack.decode('ascii') == "Password":
@@ -18,8 +18,8 @@ def Signup(s):
         return (username, Authenticated)
     else:
         password = getpass.getpass()
-        if len(password) < 3 or len(password) >15 :
-            password = "a"
+        if len(password) == 0 :
+            password = "-"
         s.send(password.encode('ascii'))
         ack = s.recv(1024)
         if not ack == "Authenticated!!":

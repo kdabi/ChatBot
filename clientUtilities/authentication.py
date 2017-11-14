@@ -10,11 +10,11 @@ def authenticate(s):
     for i in [1,2,3]:
         print("SERVER: | %s | %s Login Attempts Left \n" %( strftime("%d-%m-%Y %H:%M:%S", gmtime()), str(4 - i)))
         username = raw_input("Username: ")
-        if len(username) < 3 or len(username) > 15:
-            username = "a"
+        if len(username) == 0:
+            username = "-"
         password = getpass.getpass()
-        if len(password) < 3 or len(password) > 15:
-            password = "a"
+        if len(password) == 0:
+            password = "-"
         s.send(username.encode('ascii'))
         ack = s.recv(1024)
         s.send(password.encode('ascii'))
