@@ -64,17 +64,6 @@ while(True):
                     print("Can't login or signup for %s more seconds.\n" % str(future +1 - int(time.time())))
                 else:
                     username, Authenticated = signup.Signup(s)
-                    if not Authenticated:
-                        if wait == 0:
-                            wait = 30
-                            future = int(time.time()) + wait
-                        else:
-                            wait = 2*wait
-                            future = int(time.time()) + wait
-                        print("Can't login or signup for %s more seconds.\n" % str(wait))
-                    else:
-                        wait = 0
-                        future = int(time.time())
 
             # if user wants to print options
             elif message == "Options\n" or message == "0\n" or message == "\n":
