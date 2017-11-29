@@ -15,6 +15,7 @@ import serverUtilities.messageGroup as messageGroup
 import serverUtilities.deleteGroup as deleteGroup
 import serverUtilities.groupList as groupList
 import serverUtilities.groupMembers as groupMembers
+import serverUtilities.leaveGroup as leaveGroup
 from thread import *
 
 # create a socket object
@@ -205,6 +206,14 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             groupName = clientSocket.recv(1024).decode('ascii')
             message = groupMembers.getMembers(username, groupName)
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Leave_Group":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give name of the group you wanna leave."
+            clientSocket.send(message.encode('ascii'))
+            groupName = clientSocket.recv(1024).decode('ascii')
+            message = leaveGroup.leave(username, groupName)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
             clientSocket.send(message.encode('ascii'))
 

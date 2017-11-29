@@ -14,6 +14,7 @@ import clientUtilities.addMember as addMember
 import clientUtilities.messageGroup as messageGroup
 import clientUtilities.deleteGroup as deleteGroup
 import clientUtilities.groupMembers as groupMembers
+import clientUtilities.leaveGroup as leaveGroup
 import time
 
 #create a socket object
@@ -208,6 +209,13 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     groupMembers.getMembers(s, username)
+
+            # If the user wants to leave a group
+            elif message == "Leave_Group\n" or message == "18\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    leaveGroup.leave(s, username)
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n" or message == "3\n":
