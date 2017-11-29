@@ -13,6 +13,7 @@ import serverUtilities.createGroup as createGroup
 import serverUtilities.addMember as addMember
 import serverUtilities.messageGroup as messageGroup
 import serverUtilities.deleteGroup as deleteGroup
+import serverUtilities.groupList as groupList
 from thread import *
 
 # create a socket object
@@ -144,6 +145,12 @@ def clientThread(clientSocket, addr):
             clientSocket.send("Pass".encode('ascii'))
             msg = clientSocket.recv(1024).decode('ascii')
             message = str(onlineUsers.keys())
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Group_List" :
+            clientSocket.send("Pass".encode('ascii'))
+            msg = clientSocket.recv(1024).decode('ascii')
+            message = str(groupList.getList(username))
             clientSocket.send(message.encode('ascii'))
 
         elif msg == "Broadcast":

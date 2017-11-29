@@ -35,7 +35,8 @@ s.connect((host,(int)(port)))
 tm = s.recv(1024)
 
 print("%s" % (tm.decode('ascii')))
-print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit\n")
+print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Group_List, 17. Group_Members, 18. Leave_Group, 19. Exit\n")
+
 Authenticated = False
 wait = 0
 future = int(time.time())
@@ -76,7 +77,7 @@ while(True):
 
             # if user wants to print options
             elif message == "Options\n" or message == "0\n" or message == "\n":
-                print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Exit\n")
+                print("User OPTIONS are :\n0. Options, 1. Signup, 2. Login, 3. Broadcast, 4. Message, 5. Online_Users, 6. Block, 7. Unblock, 8. Check_User, 9. Logout, 10. Update_Password, 11. Delete_Account, 12. Create_Group, 13. Add_Member, 14. Message_Group, 15. Delete_Group, 16. Group_List, 17. Group_Member, 18. Leave_Group, 19. Exit\n")
 
             # If the user chooses Login Option, can't be choose after authenticated
             elif message == "Login\n" or message == "2\n":
@@ -116,7 +117,7 @@ while(True):
 
 
             # If the user wants to exit
-            elif message == "Exit\n" or message == "16\n":
+            elif message == "Exit\n" or message == "19\n":
                 s.send("Exit".encode("ascii"))
                 msg = s.recv(1024)
                 s.close()
@@ -171,6 +172,17 @@ while(True):
                 s.send("pass".encode("ascii"))
                 msg = s.recv(1024)
                 print("Server | %s | Online Users are %s\n" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
+
+            # If the user wants to get list of all his groups
+            elif message == "Group_List\n" or message == "16\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    s.send("Group_List".encode("ascii"))
+                    msg = s.recv(1024)
+                    s.send("pass".encode("ascii"))
+                    msg = s.recv(1024)
+                    print("Server | %s | List of your Group is %s\n" % ( strftime("%d-%m-%Y %H:%M:%S", gmtime()), msg.decode('ascii')))
 
             # If the user wants to create new group
             elif message == "Create_Group\n" or message == "12\n":
