@@ -14,6 +14,7 @@ import serverUtilities.addMember as addMember
 import serverUtilities.messageGroup as messageGroup
 import serverUtilities.deleteGroup as deleteGroup
 import serverUtilities.groupList as groupList
+import serverUtilities.groupMembers as groupMembers
 from thread import *
 
 # create a socket object
@@ -196,6 +197,14 @@ def clientThread(clientSocket, addr):
             clientSocket.send(message.encode('ascii'))
             groupName = clientSocket.recv(1024).decode('ascii')
             message = deleteGroup.deleteGroup(username, groupName)
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
+            clientSocket.send(message.encode('ascii'))
+
+        elif msg == "Group_Members":
+            message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) + ": Give name of the group whose members you wanna see."
+            clientSocket.send(message.encode('ascii'))
+            groupName = clientSocket.recv(1024).decode('ascii')
+            message = groupMembers.getMembers(username, groupName)
             message = "SERVER "+ strftime("%d-%m-%Y %H:%M:%S", gmtime()) +": " + message
             clientSocket.send(message.encode('ascii'))
 

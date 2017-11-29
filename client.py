@@ -13,6 +13,7 @@ import clientUtilities.createGroup as createGroup
 import clientUtilities.addMember as addMember
 import clientUtilities.messageGroup as messageGroup
 import clientUtilities.deleteGroup as deleteGroup
+import clientUtilities.groupMembers as groupMembers
 import time
 
 #create a socket object
@@ -211,6 +212,13 @@ while(True):
                     print("First Login  !!!\n")
                 else:
                     deleteGroup.deleteGroup(s, username)
+
+            # If the user wants to view members of a group
+            elif message == "Group_Members\n" or message == "17\n":
+                if not Authenticated:
+                    print("First Login  !!!\n")
+                else:
+                    groupMembers.getMembers(s, username)
 
             # If the user wants to broadcast his message
             elif message == "Broadcast\n" or message == "3\n":
